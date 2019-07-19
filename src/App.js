@@ -1,13 +1,15 @@
 import web3 from './utils/InitWeb3';
 import React from 'react';
 import lottery from './eth/Lottery'
+// 导入自定义样式
+import CardExampleCard from './display/ui'
 
 class App extends React.Component {
   // 利用构造函数初始化1个页面级全局变量，存储当前访问者身份
-  constructor(){
+  constructor() {
     super()
-    this.state={
-      admin:'',
+    this.state = {
+      admin: '',
     }
   }
   // async componentWillMount() {
@@ -36,17 +38,17 @@ class App extends React.Component {
 
 
     this.setState({
-      currentAccount:accounts[0],
+      currentAccount: accounts[0],
       admin,
       winner,
       buyers,
-      amount:amount.toString(),
-      round:round.toString(),
-      buyersCount:buyersCount.toString()
+      amount: amount.toString(),
+      round: round.toString(),
+      buyersCount: buyersCount.toString()
     })
   }
- render() {
-   let test = async()=>{
+  render() {
+    let test = async () => {
       try {
         let accounts = await web3.eth.getAccounts()
         console.table(accounts)
@@ -57,24 +59,33 @@ class App extends React.Component {
     }
     test();
     return (
-      <div>
-          <h1>hello , welcome to Lottery</h1>
-          <p>
-            admin : {this.state.admin}
-            <br />
-            currentAccount : {this.state.currentAccount}
-            <br />
-            winner : {this.state.winner}
-            <br />
-            buyers : {this.state.buyers}
-            <br />
-            amount : {this.state.amount}
-            <br />
-            round : {this.state.round}
-            <br />
-            buyersCount : {this.state.buyersCount}
-          </p>
-      </div>
+      <CardExampleCard
+        admin={this.state.admin}
+        currentAccount={this.state.currentAccount}
+        winner={this.state.winner}
+        buyers={this.state.buyers}
+        amount={this.state.amount}
+        round={this.state.round}
+        buyersCount={this.state.buyersCount}
+      />
+      // <div>
+      //     <h1>hello , welcome to Lottery</h1>
+      //     <p>
+      //       admin : {this.state.admin}
+      //       <br />
+      //       currentAccount : {this.state.currentAccount}
+      //       <br />
+      //       winner : {this.state.winner}
+      //       <br />
+      //       buyers : {this.state.buyers}
+      //       <br />
+      //       amount : {this.state.amount}
+      //       <br />
+      //       round : {this.state.round}
+      //       <br />
+      //       buyersCount : {this.state.buyersCount}
+      //     </p>
+      // </div>
     );
   }
 }
