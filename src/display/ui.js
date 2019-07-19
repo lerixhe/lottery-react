@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Icon, Image, Statistic, Label } from 'semantic-ui-react'
+import { Card, Icon, Image, Statistic, Label, Button } from 'semantic-ui-react'
 
 const CardExampleCard = (props) => (
     <Card>
@@ -23,10 +23,10 @@ const CardExampleCard = (props) => (
       </Card.Description>
         </Card.Content>
         <Card.Content extra>
-            <a>
+            <span>
                 <Icon name='user' />
                 {props.buyersCount}人参与
-      </a>
+      </span>
         </Card.Content>
         <Card.Content extra>
             <Statistic>
@@ -34,9 +34,18 @@ const CardExampleCard = (props) => (
                 <Statistic.Label>奖金池</Statistic.Label>
             </Statistic>
         </Card.Content>
-        <Card.Content extra>
-            <Statistic label='查看交易历史' size='mini' horizontal >第{props.round}期</Statistic>
+        <Card.Content extra center>
+            <Statistic.Value color='red' size='mini'>第{props.round}期</Statistic.Value>
+            <Statistic.Label size='mini' as='a' href='https://kovan.etherscan.io/address/0x7db224a7dbb3dc73aeb3e874168889037bd22c87' >查看交易历史</Statistic.Label>
         </Card.Content>
+        {/* 控制按钮 */}
+        <Button animated='fade' color='orange' onClick={props.bet} loading={props.isBetting} disabled={props.buttonDisableControl()}>{/* 注意括号 */}
+            <Button.Content visible>投注产生希望</Button.Content>
+            <Button.Content hidden>购买放飞梦想</Button.Content>
+        </Button>
+        {/* 仅管理员显示以下组件 */}
+        <Button inverted color='red' onClick={props.draw} loading={props.isDrawing} disabled={props.buttonDisableControl()}>开奖</Button>
+        <Button inverted color='green' onClick={props.drawback} loading={props.isDrawbacking} disabled={props.buttonDisableControl()}>退奖</Button>
     </Card>
 )
 
