@@ -4,9 +4,10 @@ const {abi,bytecode} = require('./compile')
 
 const mnemonic = 'they among attend next vital music legal sketch author flower judge fiscal'
 // 真实测试网络
+let provider = new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/d7ceb0287d484e679c9766662d462b44");
 // let provider = new HDWalletProvider(mnemonic, "https://kovan.infura.io/v3/d7ceb0287d484e679c9766662d462b44");
 // 本地ganache网络
-let provider = new HDWalletProvider(mnemonic, "http://localhost:7545");
+// let provider = new HDWalletProvider(mnemonic, "http://localhost:7545");
 const OPTIONS = {
     defaultBlock :"latest",
     transactionConfirmationBlocks: 1,

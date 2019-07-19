@@ -18,6 +18,12 @@ const CardExampleCard = (props) => (
                     <Icon name='hand point right' />{props.currentAccount}
                 </Label>
             </Card.Meta>
+            <Card.Meta>
+                <span className='date'>上期中奖地址：</span>
+                <Label size='mini'>
+                    <Icon name='hand point right' />{props.winner}
+                </Label>
+            </Card.Meta>
             <Card.Description>
                 每晚8点开奖不见不散
       </Card.Description>
@@ -44,8 +50,8 @@ const CardExampleCard = (props) => (
             <Button.Content hidden>购买放飞梦想</Button.Content>
         </Button>
         {/* 仅管理员显示以下组件 */}
-        <Button inverted color='red' onClick={props.draw} loading={props.isDrawing} disabled={props.buttonDisableControl()}>开奖</Button>
-        <Button inverted color='green' onClick={props.drawback} loading={props.isDrawbacking} disabled={props.buttonDisableControl()}>退奖</Button>
+        <Button inverted color='red' onClick={props.draw} loading={props.isDrawing} disabled={props.buttonDisableControl()} style={{display:props.isShowButton}}>开奖</Button>
+        <Button inverted color='green' onClick={props.drawback} loading={props.isDrawbacking} disabled={props.buttonDisableControl()} style={{display:props.isShowButton}}>退奖</Button>
     </Card>
 )
 

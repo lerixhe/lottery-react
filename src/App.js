@@ -9,10 +9,16 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      admin: '',
+      admin: "正在获取数据",
+      winner: "0x000000000000000000000",
+      currentAccount: "正在获取数据",
+      buyersCount: 0,
+      round: 0,
+      amount: 0,
       isBetting: false,
       isDrawing: false,
       isDrawbacking: false,
+      isShowButton: 'none',//默认不显示按钮
     }
   }
   // async componentWillMount() {
@@ -29,30 +35,32 @@ class App extends React.Component {
   async componentWillMount() {
     let accounts = await web3.eth.getAccounts();
     let admin = await lottery.methods.getAdmin().call();
-    if(admin == null){
-      alert(`未获取到合约地址，请联系管理员！`)
-      return
-    }
     let winner = await lottery.methods.getWinner().call();
     let buyers = await lottery.methods.getBuyers().call();
     // console.log(buyers)
     let amount = await lottery.methods.getAmount().call();
-    if(amount == null){
+    if (amount == null) {
       amount = 0
     }
     amount = web3.utils.fromWei(amount.toString())
     // console.log(amount)
     let round = await lottery.methods.getRound().call();
-    if(round == null){
+    if (round == null) {
       round = 1
     }
+    round = round.toString()
     // console.log(round)
     let buyersCount = await lottery.methods.getBuyersCount().call();
-    if(buyersCount == null){
+    if (buyersCount == null) {
       buyersCount = 0
     }
+    buyersCount = buyersCount.toString()
     // console.log(buyersCount)
-
+    if (admin == null) {
+      admin = "未获取到智能合约地址，请勿投注";
+      winner = "0x000000000000000000000"
+      alert(`未获取到合约地址，为避免资金损失，请勿投注！`)
+    }
 
     this.setState({
       currentAccount: accounts[0],
@@ -60,10 +68,11 @@ class App extends React.Component {
       winner,
       buyers,
       amount,
-      round: round.toString(),
-      buyersCount: buyersCount.toString()
-    })
+      round,
+      buyersCount,
+      isShowButton: accounts[0] === admin ? 'inline' : 'none',
 
+    })
   }
   // 定义下注函数为1个变量，等待前端调用
   bet = async () => {
@@ -74,11 +83,16 @@ class App extends React.Component {
       await lottery.methods.bet().send({
         from: accounts[0],
         value: 1 * 10 ** 18
+      }, (error, _) => {
+        if(error!==false){
+          alert(`投注失败！${error}`)
+          // 刷新页面
+        }else{
+          alert(`投注成功`)
+        }
+        this.setState({ isBetting: false })
+        window.location.reload(true)
       })
-      alert(`投注成功！`)
-      this.setState({ isBetting: false })
-      // 刷新页面
-      window.location.reload(true)
     } catch (error) {
       alert(`投注失败，${error}`)
       this.setState({ isBetting: false })
@@ -93,34 +107,47 @@ class App extends React.Component {
       await lottery.methods.draw().send({
         from: accounts[0],
         // 无需附带金额
+      }, (error, _) => {
+        if(error!==false){
+          alert(`开奖失败！${error}`)
+          // 刷新页面
+        }else{
+          alert(`开奖成功\n区块链网络将自动发送奖励给胜利者！`)
+        }
+        this.setState({ isDrawing: false })
+        window.location.reload(true)
       })
-      alert(`开奖成功\n本次获奖者是：${this.state.winner}`)
-      this.setState({isDrawing:false})
-      window.location.reload(true)
+
     } catch (error) {
-      this.setState({isDrawing:false})
+      this.setState({ isDrawing: false })
       alert(`开奖失败,${error}`)
     }
   }
   // 定义退奖函数
-  drawback = async ()=>{
+  drawback = async () => {
     console.log("drawback button is clicked")
-    this.setState({isDrawbacking:true})
+    this.setState({ isDrawbacking: true })
     try {
       let accounts = await web3.eth.getAccounts()
       await lottery.methods.drawback().send({
-        from:accounts[0]
+        from: accounts[0]
+      }, (error, _) => {
+        if(error!==false){
+          alert(`退奖失败！${error}`)
+          // 刷新页面
+        }else{
+          alert(`退奖成功！`)
+        }
+        this.setState({ isDrawbacking: false })
+        window.location.reload(true)
       })
-      alert(`退奖成功！`)
-      this.setState({isDrawbacking:false})
-      window.location.reload(true)
     } catch (error) {
-      this.setState({isDrawbacking:false})
+      this.setState({ isDrawbacking: false })
       alert(`退奖失败,${error}`)
     }
   }
   // 定义全局禁用按钮函数，防止用户连续点击重复提交
-  buttonDisableControl = ()=>{
+  buttonDisableControl = () => {
     return this.state.isBetting || this.state.isDrawbacking || this.state.isDrawing
     // 只要有1个true，则全局true
   }
@@ -143,7 +170,7 @@ class App extends React.Component {
         drawback={this.drawback}
         isDrawbacking={this.state.isDrawbacking}
         buttonDisableControl={this.buttonDisableControl}
-
+        isShowButton={this.state.isShowButton}
       />
       // <div>
       //     <h1>hello , welcome to Lottery</h1>
